@@ -60,4 +60,4 @@ async def check(_, message: Message):
         system("git pull -f && pip3 install -r requirements.txt")
         execle(sys.executable, sys.executable, "main.py", environ)
         return
-    await msg.edit("Bot is already in up-to-date mode with **[latest version](https://github.com/UnknownMortal/M8N-Music-Bot)**", disable_web_page_preview=True)
+    await msg.edit("Bot is already in up-to-date mode with **[Robot](https://t.me/ImperialXRobot)**", disable_web_page_preview=True)
