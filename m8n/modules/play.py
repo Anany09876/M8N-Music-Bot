@@ -45,6 +45,8 @@ from m8n.database.queue import (
 from m8n import app
 import m8n.tgcalls
 from m8n.tgcalls import youtube
+from m8n.tgcalls.youtube import download
+from m8n.tgcalls import convert as cconvert
 from m8n.config import (
     DURATION_LIMIT,
     que,
@@ -231,7 +233,7 @@ async def play(_, message: Message):
     c = await app.get_chat_member(message.chat.id, BOT_ID)
     if c.status != "administrator":
         await lel.edit(
-            f"I need to be admin with some permissions:\n\n❌ **can_manage_voice_chats:** To manage voice chats\n❌ **can_delete_messages:** To delete music's searched waste\n❌ **can_invite_users**: For inviting assistant to chat\n❌ **can_restrict_members**: For protecting music from spammers."
+            f"I need to be admin with some permissions:\n\n❌ **can_manage_voice_chats:** To manage voice chats\n❌ **can_delete_messages:** To delete music's searched waste\n❌ **can_invite_users**: For inviting assistant to chat"
         )
         return
     if not c.can_manage_voice_chats:
@@ -250,12 +252,6 @@ async def play(_, message: Message):
         await lel.edit(
             "I don't have the required permission to perform this action."
             + "\n❌ **Permission:** Invite User Via Invitelink"
-        )
-        return
-    if not c.can_restrict_members:
-        await lel.edit(
-            "I don't have the required permission to perform this action."
-            + "\n❌ **Permission:** Ban User"
         )
         return
 
@@ -314,7 +310,7 @@ async def play(_, message: Message):
         file_name = get_file_name(audio)
         url = f"https://t.me/{UPDATE}"
         title = audio.title
-        thumb_name = "https://telegra.ph//file/461807815346e07838083.jpg"
+        thumb_name = "https://telegra.ph/file/a7adee6cf365d74734c5d.png"
         thumbnail = thumb_name
         duration = round(audio.duration / 60)
         views = "Locally added"
@@ -322,15 +318,16 @@ async def play(_, message: Message):
         keyboard = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("📨 Support", url=f"t.me/{SUPPORT}"),
-                    InlineKeyboardButton("📨 Updates", url=f"t.me/{UPDATE}"),
+                    InlineKeyboardButton("⚙️ Manage", callback_data="cbmenu"),
+                    InlineKeyboardButton("⚡ Speed", callback_data="speed"),
                 ],
+                [InlineKeyboardButton(text="🗑 Close Pannel", callback_data="cls")],
             ]
         )
 
         requested_by = message.from_user.first_name
         await generate_cover(requested_by, title, views, duration, thumbnail)
-        file_path = await m8n.tgcalls.convert(
+        file_path = await cconvert(
             (await message.reply_to_message.download(file_name))
             if not path.isfile(path.join("downloads", file_name))
             else file_name
@@ -359,15 +356,16 @@ async def play(_, message: Message):
             keyboard = InlineKeyboardMarkup(
                 [
                     [
-                        InlineKeyboardButton("📨 Support", url=f"t.me/{SUPPORT}"),
-                        InlineKeyboardButton("📨 Updates", url=f"t.me/{UPDATE}"),
+                        InlineKeyboardButton("⚙️ Manage", callback_data="cbmenu"),
+                        InlineKeyboardButton("⚡ Speed", callback_data="speed"),
                     ],
+                    [InlineKeyboardButton(text="🗑 Close Pannel", callback_data="cls")],
                 ]
             )
 
         except Exception as e:
             title = "NaN"
-            thumb_name = "https://telegra.ph//file/461807815346e07838083.jpg"
+            thumb_name = "https://telegra.ph/file/a7adee6cf365d74734c5d.png"
             duration = "NaN"
             views = "NaN"
             keyboard = InlineKeyboardMarkup(
@@ -446,17 +444,17 @@ async def play(_, message: Message):
                 print(f"[{url_suffix}] Downloaded| Elapsed: {taken} seconds")
 
         loop = asyncio.get_event_loop()
-        x = await loop.run_in_executor(None, youtube.download, url, my_hook)
-        file_path = await m8n.tgcalls.convert(x)
+        x = await loop.run_in_executor(None, download, url, my_hook)
+        file_path = await cconvert(x)
     else:
         if len(message.command) < 2:
             return await lel.edit(
-                "❌ **Song not found !! Try searching with the correct title**"
+                "❌ **Song not found! Try searching with the correct title\nExample » /play 295**"
             )
         await lel.edit("🔎 **Finding the song...**")
         query = message.text.split(None, 1)[1]
         # print(query)
-        await lel.edit("**Joining Voice Chat !!**")
+        await lel.edit("🌟 **Processing sounds...**")
         try:
             results = YoutubeSearch(query, max_results=5).to_dict()
             url = f"https://youtube.com{results[0]['url_suffix']}"
@@ -487,9 +485,10 @@ async def play(_, message: Message):
         keyboard = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("📨 Support", url=f"t.me/{SUPPORT}"),
-                    InlineKeyboardButton("📨 Updates", url=f"t.me/{UPDATE}"),
+                    InlineKeyboardButton("⚙️ Manage", callback_data="cbmenu"),
+                    InlineKeyboardButton("⚡ Speed", callback_data="speed"),
                 ],
+                [InlineKeyboardButton(text="🗑 Close Pannel", callback_data="cls")],
             ]
         )
 
@@ -565,17 +564,17 @@ async def play(_, message: Message):
                 print(f"[{url_suffix}] Downloaded| Elapsed: {taken} seconds")
 
         loop = asyncio.get_event_loop()
-        x = await loop.run_in_executor(None, youtube.download, url, my_hook)
-        file_path = await m8n.tgcalls.convert(x)
+        x = await loop.run_in_executor(None, download, url, my_hook)
+        file_path = await cconvert(x)
 
     if await is_active_chat(message.chat.id):
         position = await queues.put(message.chat.id, file=file_path)
         await message.reply_photo(
             photo="final.png",
-            caption="**[Get More Information ⚠️]({})**\n\nDuration : {}\nBot User : {}".format(
+            caption="**[Get Additional Information ⚠️]({})**\n\n**👤 Bot User : {}**\n**📀 Track : {}**".format(
                 url,
-                duration,
-                message.from_user.mention()
+                message.from_user.mention(),
+                position,
             ),
             reply_markup=keyboard,
         )
@@ -600,8 +599,8 @@ async def play(_, message: Message):
         await message.reply_photo(
             photo="final.png",
             reply_markup=keyboard,
-            caption="**[Get More Information ⚠️]({})**\n\nDuration : {}\nBot User : {}".format(
-                url, duration, message.from_user.mention()
+            caption="**[Get Additional Information ⚠️]({})\n\n**👤 Bot User : {}**\n🌐 Group : {}**".format(
+                url, message.from_user.mention(), message.chat.title
             ),
         )
 

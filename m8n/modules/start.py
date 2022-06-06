@@ -16,35 +16,37 @@ from m8n.config import BOT_NAME
 async def start_(client: Client, message: Message):
     await message.reply_photo(
         photo=f"{START_PIC}",
-        caption=f"""**Welcome 👋 {message.from_user.mention()}**
+        caption=f"""Hello 👋 My name is **{BOT_NAME}**
 
-This is the {BOT_NAME}, a bot for playing high quality and unbreakable music in your groups voice chat.
+I'm most complete voice chat music player for playing high quality and unbreakable music in your groups voice chat with some useful features.
 
-Just add me to your group and make a admin with needed admin permission to perform a right actions !!
-
-Use the given buttons for more 📍""",
+Use inline buttons given below to know more about me !!""",
     reply_markup=InlineKeyboardMarkup(
             [
                 [
                     InlineKeyboardButton(
-                        "About", callback_data="cbabout"),
+                        "🏳‍🌈 Main Info", callback_data="cbabout"),
                     InlineKeyboardButton(
-                        "Commands", callback_data="cbcmds")
+                        "🗂 Commands", callback_data="cbevery")
                 ],
                 [
                     InlineKeyboardButton(
-                        "✚ Add Bot in Your Group ✚", url=f"https://t.me/{BOT_USERNAME}?startgroup=true")
+                        "☁️ Others", callback_data="others")
+                ],
+                [
+                    InlineKeyboardButton(
+                        "✚ Click here to Summon Me", url=f"https://t.me/{BOT_USERNAME}?startgroup=true")
                 ]
            ]
         ),
     )
 
 
-@Client.on_message(command(["start"]) & filters.group & ~filters.edited)
-async def help(client: Client, message: Message):
+@Client.on_message(command(["start", f"start@{BOT_USERNAME}"]) & filters.group & ~filters.edited)
+async def gcstart(client: Client, message: Message):
     await message.reply_photo(
         photo=f"{START_PIC}",
-        caption=f"""Thanks for adding me in your group !! If you want to use me with right actions promote me as admin in this Chat.""",
+        caption=f"Thanks for adding me in your group !! If you want to use me with right actions promote me as admin in this Chat.",
         reply_markup=InlineKeyboardMarkup(
             [
                 [

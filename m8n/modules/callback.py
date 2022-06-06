@@ -14,20 +14,22 @@ from m8n.config import BOT_NAME
 @Client.on_callback_query(filters.regex("cbhome"))
 async def cbhome(_, query: CallbackQuery):
     await query.edit_message_text(
-        f"""**Welcome [👋]({START_PIC}) [{query.message.chat.first_name}](tg://user?id={query.message.chat.id})**
+        f"""Hello [👋]({START_PIC}) My name is **{BOT_NAME}**
 
-This is the {BOT_NAME}, a Bot for playing high quality and unbreakable music in your groups voice chat.
+I'm most complete voice chat music player for playing high quality and unbreakable music in your groups voice chat with some useful features.
 
-Just add me to your group and make a admin with needed admin permission to perform a right actions !!
-
-Use the given buttons for more 📍""",
+Use inline buttons given below to know more about me !!""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
                     InlineKeyboardButton(
-                        "About", callback_data="cbabout"),
+                        "🏳‍🌈 Main Info", callback_data="cbabout"),
                     InlineKeyboardButton(
-                        "Commands", callback_data="cbcmds")
+                        "🗂 Commands", callback_data="cbevery")
+                ],
+                [
+                    InlineKeyboardButton(
+                        "☁️ Others", callback_data="others")
                 ],
                 [
                     InlineKeyboardButton(
@@ -60,8 +62,8 @@ Check out all the commands given below by Click on the given inline buttons !!""
         ),
     ) 
 
-# Commands for Everyone !!
 
+# Commands for Everyone !!
 @Client.on_callback_query(filters.regex("cbevery"))
 async def all_set(_, query: CallbackQuery):
     await query.answer("Everyone menu")
@@ -88,15 +90,18 @@ async def all_set(_, query: CallbackQuery):
 - Get youtube url by inline mode""",
         reply_markup=InlineKeyboardMarkup(
             [
-                [
-                    InlineKeyboardButton("🔙 Go Back", callback_data="cbcmds")
+              [
+                    InlineKeyboardButton(
+                        "Admins", callback_data="cbadmins"),
+                    InlineKeyboardButton(
+                        "Sudo/Owner", callback_data="cbsudo")
                 ],
-            ]
+              [InlineKeyboardButton("⬅️ Go Back", callback_data="cbhome")]]
         ),
     )
 
-# Commands for SudoUsers
 
+# Commands for SudoUsers
 @Client.on_callback_query(filters.regex("cbsudo"))
 async def sudo_set(_, query: CallbackQuery):
     await query.answer("sudo menu")
@@ -121,14 +126,14 @@ async def sudo_set(_, query: CallbackQuery):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("🔙 Go Back", callback_data="cbcmds")
+                    InlineKeyboardButton("🔙 Go Back", callback_data="cbevery")
                 ],
             ]
         ),
     )
 
-# Commands for Group Admins
 
+# Commands for Group Admins
 @Client.on_callback_query(filters.regex("cbadmins"))
 async def admin_set(_, query: CallbackQuery):
     await query.answer("admins menu")
@@ -156,14 +161,14 @@ async def admin_set(_, query: CallbackQuery):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("🔙 Go Back", callback_data="cbcmds")
+                    InlineKeyboardButton("🔙 Go Back", callback_data="cbevery")
                 ],
             ]
         ),
     )
 
-# Bot about & Information
 
+# Bot about & Information
 @Client.on_callback_query(filters.regex("cbabout"))
 async def about_set(_, query: CallbackQuery):
     await query.edit_message_text(
@@ -178,6 +183,63 @@ Click on the given inline buttons to know all the information about the Bot !!""
                     InlineKeyboardButton("👤 Owner", url=f"https://t.me/{OWNER_USERNAME}"),
                 ],[
                     InlineKeyboardButton("⬅️ Back", callback_data="cbhome")
+                ],
+            ]
+        ),
+    )
+
+
+# OTHERS CALLBACK
+@Client.on_callback_query(filters.regex("others"))
+async def others(_, query: CallbackQuery):
+    await query.edit_message_text(
+        f"""Powered By : @{UPDATE}
+
+After you played your song some menu buttons will be comes to manage your music playing on voice chat. All the buttons are as follows :
+
+• ⏸ 
+- Resume Music
+• ▶️
+- Pause Music
+• ⏹ 
+- End Music
+• ⏩
+- Skip Music
+
+Only admins can use this buttons📍""",
+        reply_markup=InlineKeyboardMarkup(
+            [
+              [
+                    InlineKeyboardButton("Support 🚶", url=f"https://t.me/{SUPPORT}"),
+                    InlineKeyboardButton("Updates 🤖", url=f"https://t.me/{UPDATE}")
+                ],
+            [InlineKeyboardButton("Basic Guide & Full Set-up", callback_data="setup")],
+            [InlineKeyboardButton("🔙  Back Home", callback_data="cbhome")]]
+        ),
+    )
+
+@Client.on_callback_query(filters.regex("setup"))
+async def setup(_, query: CallbackQuery):
+    await query.edit_message_text(
+        f"""**Basic SetUp Guide for the Bot Usage :**
+
+
+• Add this Bot in your Group.
+
+• Promote it as an administrator with needed powers.
+
+• Now send /play or /userbotjoin command to invite assistant id in your Chat.
+
+• Your All the Set-Up is Done, Now enjoy your favourite music in your groups voice chat without any limitations.
+
+
+Thanks !!
+Please don't forget to Join our Group :
+@{UPDATE}""",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton("🔙 Go Back", callback_data="others")
                 ],
             ]
         ),
