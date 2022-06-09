@@ -438,6 +438,8 @@ async def play(_, message: Message):
             thumb = requests.get(thumbnail, allow_redirects=True)
             open(thumb_name, "wb").write(thumb.content)
             duration = results[0]["duration"]
+            vidid = results["id"]
+            videoid = check[0]["vidid"]
             url_suffix = results[0]["url_suffix"]
             views = results[0]["views"]
             durl = url
